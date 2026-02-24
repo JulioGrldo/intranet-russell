@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel | Russell Bedford</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { corporate: { blue: '#001871', bg: '#F8F9FA' } } } } }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabaseClient.js"></script>
+</head>
+<body class="bg-corporate-bg min-h-screen font-sans flex flex-col">
+    
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://raw.githubusercontent.com/AutomatizaRussell/Resourse_GestionHumana/main/Logo_RB2021.png" alt="Logo Russell Bedford" class="h-10">
+                <span class="text-gray-400 font-light hidden sm:inline">|</span>
+                <span class="text-corporate-blue font-semibold hidden sm:inline">Portal del Empleado</span>
+            </div>
+            <a href="login.html" class="text-red-500 hover:text-red-700 transition font-medium text-sm flex items-center gap-2">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Salir
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-6 py-10">
+        <h1 class="text-3xl font-bold text-corporate-blue mb-2">Bienvenido a tu panel</h1>
+        <p class="text-gray-600 mb-10">Desde aquí puedes gestionar tus solicitudes y documentos corporativos.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="absolute top-0 left-0 w-full h-1 bg-corporate-blue"></div>
+                <div class="w-12 h-12 bg-blue-50 text-corporate-blue rounded-xl flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-file-signature"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Certificado Laboral</h3>
+                <p class="text-gray-500 text-sm mb-6">Solicita un certificado con tu cargo, fecha de ingreso y salario actual. Se enviará a tu correo.</p>
+                
+                <form id="form-certificado" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Confirma tu número de documento:</label>
+                        <input type="text" id="empDocumento" required placeholder="Ej: 1020304050" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-1 focus:ring-corporate-blue outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-corporate-blue text-white font-medium py-2 rounded-lg text-sm hover:bg-blue-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Solicitud
+                    </button>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-60">
+                <div class="w-12 h-12 bg-gray-100 text-gray-400 rounded-xl flex items-center justify-center text-xl mb-4">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Comprobantes de Nómina</h3>
+                <p class="text-gray-500 text-sm mb-6">Descarga tus desprendibles de pago mensuales y primas.</p>
+                <button disabled class="w-full bg-gray-100 text-gray-400 font-medium py-2 rounded-lg text-sm cursor-not-allowed">
+                    Próximamente
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="empleado.js"></script>
+</body>
+</html>
