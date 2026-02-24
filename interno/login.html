@@ -72,10 +72,10 @@
                     return;
                 }
 
-           // PASO 2: EL PUENTE. Buscamos el correo y ahora también el ROL
+                // PASO 2: Buscamos el correo y el ROL en tu tabla de empleados
                 const { data: empData, error: empError } = await window.supabaseClient
                     .from('empleados')
-                    .select('id, nombre_completo, documento, cargo, rol') // <-- Añadimos 'rol' aquí
+                    .select('id, nombre_completo, documento, cargo, rol') 
                     .eq('correo_corporativo', email)
                     .single();
 
@@ -87,37 +87,20 @@
                     return;
                 }
 
-                // Guardamos los datos en la memoria
+                // PASO 3: Guardamos los datos reales en la memoria del navegador
                 localStorage.setItem('empleado_id', empData.id);
                 localStorage.setItem('empleado_nombre', empData.nombre_completo);
                 localStorage.setItem('empleado_documento', empData.documento);
-                localStorage.setItem('empleado_rol', empData.rol); // <-- Guardamos el rol
+                localStorage.setItem('empleado_rol', empData.rol); 
 
-                // PASO 3: EL DESVÍO (El semáforo)
+                // PASO 4: EL DESVÍO CORRECTO (El semáforo)
                 if (empData.rol === 'admin') {
-                    // Si es de RRHH, lo mandamos a la bóveda secreta
+                    // Si es de RRHH, lo mandamos a la bóveda secreta de Admin
                     window.location.href = '../admin/panel.html';
                 } else {
-                    // Si es empleado normal, lo mandamos a su panel
+                    // Si es empleado normal, lo mandamos a pedir sus certificados
                     window.location.href = 'dashboard.html';
                 }
-
-                // PASO 3: Si no es un empleado, lo expulsamos por seguridad
-                if (empError || !empData) {
-                    await window.supabaseClient.auth.signOut(); // Cerramos la sesión que acababa de abrir
-                    alert('Acceso denegado: Estás registrado, pero no figuras como empleado activo en la base de datos de Gestión Humana.');
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
-                    return;
-                }
-
-                // PASO 4: ¡Todo está perfecto! Guardamos sus datos reales y lo dejamos entrar
-                localStorage.setItem('empleado_id', empData.id);
-                localStorage.setItem('empleado_nombre', empData.nombre_completo);
-                localStorage.setItem('empleado_documento', empData.documento);
-                
-                // Redirigimos a su panel
-                window.location.href = 'dashboard.html';
 
             } catch (err) {
                 console.error('Error de sistema:', err);
