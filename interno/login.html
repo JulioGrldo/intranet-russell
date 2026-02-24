@@ -45,10 +45,86 @@
         </form>
     </div>
 
-    <script>
+   <script>
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            window.location.href = 'dashboard.html';
+            
+            // Tomamos los datos del formulario
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Validando...';
+
+            try {
+                // PASO 1: Preguntamos a la Bóveda si la clave es correcta
+                const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (authError) {
+                    alert('Acceso denegado: Correo o contraseña incorrectos.');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    return;
+                }
+
+           // PASO 2: EL PUENTE. Buscamos el correo y ahora también el ROL
+                const { data: empData, error: empError } = await window.supabaseClient
+                    .from('empleados')
+                    .select('id, nombre_completo, documento, cargo, rol') // <-- Añadimos 'rol' aquí
+                    .eq('correo_corporativo', email)
+                    .single();
+
+                if (empError || !empData) {
+                    await window.supabaseClient.auth.signOut(); 
+                    alert('Acceso denegado: No figuras como empleado activo.');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    return;
+                }
+
+                // Guardamos los datos en la memoria
+                localStorage.setItem('empleado_id', empData.id);
+                localStorage.setItem('empleado_nombre', empData.nombre_completo);
+                localStorage.setItem('empleado_documento', empData.documento);
+                localStorage.setItem('empleado_rol', empData.rol); // <-- Guardamos el rol
+
+                // PASO 3: EL DESVÍO (El semáforo)
+                if (empData.rol === 'admin') {
+                    // Si es de RRHH, lo mandamos a la bóveda secreta
+                    window.location.href = '../admin/panel.html';
+                } else {
+                    // Si es empleado normal, lo mandamos a su panel
+                    window.location.href = 'dashboard.html';
+                }
+
+                // PASO 3: Si no es un empleado, lo expulsamos por seguridad
+                if (empError || !empData) {
+                    await window.supabaseClient.auth.signOut(); // Cerramos la sesión que acababa de abrir
+                    alert('Acceso denegado: Estás registrado, pero no figuras como empleado activo en la base de datos de Gestión Humana.');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    return;
+                }
+
+                // PASO 4: ¡Todo está perfecto! Guardamos sus datos reales y lo dejamos entrar
+                localStorage.setItem('empleado_id', empData.id);
+                localStorage.setItem('empleado_nombre', empData.nombre_completo);
+                localStorage.setItem('empleado_documento', empData.documento);
+                
+                // Redirigimos a su panel
+                window.location.href = 'dashboard.html';
+
+            } catch (err) {
+                console.error('Error de sistema:', err);
+                alert('Ocurrió un error de conexión con la base de datos.');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         });
     </script>
 </body>
