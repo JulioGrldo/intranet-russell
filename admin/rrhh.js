@@ -2,8 +2,9 @@
 // Asegúrate de importar el script de Supabase en tu HTML antes de este archivo:
 // <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-const supabaseUrl = 'http://TU_IP_DEL_VPS:54321';
-const supabaseKey = 'TU_SERVICE_ROLE_KEY_AQUI'; // Usamos la key segura para que RRHH tenga control total
+const supabaseUrl = 'http://72.60.165.161:54321';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaXNzIjoic3VwYWJhc2UiLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MjAwMDAwMDAwMH0.ocgMZIiSZB41nEuUq91QsxVCjPVrGOmz6ptHuYTwJ6U';
+
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // Variables globales para almacenar los datos temporales
