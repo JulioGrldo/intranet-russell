@@ -12,7 +12,9 @@ let solicitudActualParaPDF = null;
 document.addEventListener('DOMContentLoaded', async () => {
     await cargarDirectorio();
     await cargarSolicitudesCertificados();
+    await cargarPostulaciones(); // ¡Tus postulaciones siguen aquí intactas!
 
+    // Lógica para Cerrar Sesión
     document.getElementById('btn-logout').addEventListener('click', async () => {
         if(window.supabaseClient) await window.supabaseClient.auth.signOut();
         localStorage.clear();
@@ -46,6 +48,52 @@ async function cargarDirectorio() {
         });
     } catch (err) {
         console.error('Error:', err);
+    }
+}
+
+async function cargarPostulaciones() {
+    try {
+        const { data, error } = await supabaseAdmin
+            .from('postulaciones')
+            .select('id, nombre_candidato, correo, telefono, url_cv, vacantes(titulo)')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const tbody = document.querySelector('#tabla-postulaciones tbody');
+        tbody.innerHTML = '';
+
+        if (data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-gray-500">Aún no hay postulaciones recibidas.</td></tr>';
+            return;
+        }
+
+        data.forEach(post => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-gray-50 hover:bg-blue-50/50 transition';
+            const tituloVacante = post.vacantes ? post.vacantes.titulo : 'Vacante cerrada/eliminada';
+
+            tr.innerHTML = `
+                <td class="py-4 px-6 font-bold text-gray-800">${post.nombre_candidato}</td>
+                <td class="py-4 px-6">
+                    <div class="text-sm text-gray-600"><i class="fa-solid fa-envelope mr-1 text-gray-400"></i> ${post.correo}</div>
+                    <div class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-phone mr-1 text-gray-400"></i> ${post.telefono || 'No registrado'}</div>
+                </td>
+                <td class="py-4 px-6">
+                    <span class="px-3 py-1 bg-orange-50 text-[#F26822] border border-orange-100 rounded-lg text-xs font-bold uppercase tracking-wide">
+                        ${tituloVacante}
+                    </span>
+                </td>
+                <td class="py-4 px-6 text-right">
+                    <a href="${post.url_cv}" target="_blank" class="inline-flex items-center justify-center bg-gray-50 hover:bg-[#001871] text-[#001871] hover:text-white font-medium text-sm px-4 py-2 rounded-lg border border-gray-200 hover:border-transparent transition-colors">
+                        <i class="fa-solid fa-file-pdf mr-2 text-red-500 group-hover:text-white"></i> Ver CV
+                    </a>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Error cargando postulaciones:', err);
     }
 }
 
@@ -103,37 +151,35 @@ window.previsualizarCertificado = function(solicitudId) {
     solicitudActualParaPDF = solicitud;
     const emp = solicitud.empleados;
 
-    // 1. Leer las reglas que el empleado escogió en el modal (si no hay, por defecto es todo)
+    // 1. Leer las opciones del empleado guardadas en el JSON
     let opciones = { dirigido: 'A QUIEN INTERESE', sueldo: true, cargo: true };
     try {
         if(solicitud.comentarios_rrhh) opciones = JSON.parse(solicitud.comentarios_rrhh);
     } catch(e) { console.warn("Usando opciones por defecto"); }
 
-    // 2. Formatear datos
+    // 2. Formatear números y fechas
     const salario = emp.sueldo || emp.salario || 0;
     const sueldoFormat = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(salario);
     
-    // Meses en español
     const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
     
     let fechaIngresoTxt = '[FECHA NO REGISTRADA]';
     if(emp.fecha_ingreso) {
         const d = new Date(emp.fecha_ingreso);
-        // Sumamos 1 día porque a veces la zona horaria le resta un día al guardarlo
-        d.setDate(d.getDate() + 1); 
+        d.setDate(d.getDate() + 1); // Compensar zona horaria si es necesario
         fechaIngresoTxt = `${String(d.getDate()).padStart(2, '0')} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
     }
 
     const hoy = new Date();
     const fechaHoyTxt = `${String(hoy.getDate()).padStart(2, '0')} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
 
-    // Validar si tiene lugar de expedición en la base de datos
     const expedicion = emp.lugar_expedicion_cedula ? ` de ${emp.lugar_expedicion_cedula}` : '';
     const empresa = emp.razon_social || emp.division || 'GLT GESTIÓN LEGAL Y TRIBUTARIA S.A.S';
 
     // 3. ARMAMOS TU REDACCIÓN EXACTA
-    let textoBase = `Certificamos que el señor(a) <strong class="uppercase">${emp.nombre_completo}</strong> identificado con cédula de ciudadanía No ${emp.documento}${expedicion}, labora en <strong class="uppercase">${empresa}</strong> con Nit. 900930391-1, desde el ${fechaIngresoTxt}, con contrato a término indefinido`;
+    let textoBase = `Certificamos que el señor(a) <strong class="uppercase">${emp.nombre_completo}</strong> identificado con cédula de ciudadanía No ${new Intl.NumberFormat('es-CO').format(emp.documento)}${expedicion}, labora en <strong class="uppercase">${empresa}</strong> con Nit. 900930391-1, desde el ${fechaIngresoTxt}, con contrato a término indefinido`;
 
+    // Respetar las opciones del empleado
     if (opciones.cargo && emp.cargo) {
         textoBase += `, desempeñando el cargo de <strong class="uppercase">${emp.cargo}</strong>`;
     }
@@ -142,7 +188,7 @@ window.previsualizarCertificado = function(solicitudId) {
     }
     textoBase += `.`;
 
-    // 4. Inyectar datos a la plantilla
+    // 4. Inyectar datos en la plantilla oculta
     document.getElementById('cert-dirigido-text').innerText = opciones.dirigido;
     document.getElementById('cert-body-editable').innerHTML = textoBase;
     document.getElementById('cert-fecha-top').innerText = `Medellín, ${fechaHoyTxt}`;
@@ -151,10 +197,12 @@ window.previsualizarCertificado = function(solicitudId) {
     const canvas = document.getElementById('previewCanvas');
     canvas.innerHTML = ''; 
     const templateClone = document.getElementById('certificado-content').cloneNode(true);
+    
+    // Asignar ID nuevo para evitar conflictos y asegurar que sea editable
     templateClone.id = "cloned-cert-content";
     canvas.appendChild(templateClone);
 
-    // 6. Mostrar pantalla
+    // 6. Mostrar el Modal
     document.getElementById('modalPreview').classList.remove('hidden');
 }
 
@@ -172,10 +220,10 @@ window.descargarCertificado = async function() {
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Generando...';
 
     const emp = solicitudActualParaPDF.empleados;
-    // Capturamos la vista clonada (que incluye las ediciones manuales que hizo el Admin)
+    // Seleccionamos el canvas visible en la pantalla
     const element = document.getElementById('cloned-cert-content');
 
-    // Desactivar temporalmente el modo editable para que no salga el cursor en el PDF
+    // Desactivamos temporalmente el contenteditable para que el PDF no salga con un cursor de texto dibujado
     const editableDiv = element.querySelector('#cert-body-editable');
     if (editableDiv) editableDiv.removeAttribute('contenteditable');
 

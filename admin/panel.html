@@ -7,8 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // EL CANDADO DE SEGURIDAD
         const rolActual = localStorage.getItem('empleado_rol');
-        if (rolActual !== 'admin') window.location.href = '../index.html';
+        if (rolActual !== 'admin') {
+            window.location.href = '../index.html';
+        }
     </script>
     <script>
         tailwind.config = { theme: { extend: { colors: { corporate: { blue: '#001871', light: '#002bc2', bg: '#F8F9FA' } } } } }
@@ -23,6 +26,7 @@
         body { font-family: 'Inter', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        /* Scrollbar del modal */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
@@ -51,7 +55,7 @@
                 
                 <div class="pt-4 mt-4 border-t border-gray-100">
                     <a href="../interno/dashboard.html" class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-50 hover:text-corporate-blue rounded-xl transition-all font-medium">
-                        <i class="fa-solid fa-user-circle w-5"></i> Mi Portal
+                        <i class="fa-solid fa-user-circle w-5"></i> Mi Portal (Empleado)
                     </a>
                 </div>
             </nav>
@@ -66,28 +70,63 @@
 
     <main class="flex-1 flex flex-col overflow-hidden relative">
         <div class="flex-1 overflow-auto p-8">
+            
             <div id="tab-vacantes" class="tab-content active">
-                <h2 class="text-3xl font-bold text-corporate-blue tracking-tight mb-8">Gestión de Postulaciones</h2>
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center text-gray-500">Módulo en construcción.</div>
+                <h2 class="text-3xl font-bold text-[#001871] tracking-tight mb-8">Postulaciones Recibidas</h2>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse" id="tabla-postulaciones">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                <th class="py-4 px-6 font-semibold">Candidato</th>
+                                <th class="py-4 px-6 font-semibold">Contacto</th>
+                                <th class="py-4 px-6 font-semibold">Vacante Aplicada</th>
+                                <th class="py-4 px-6 font-semibold text-right">Hoja de Vida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" class="text-center py-6 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando postulaciones...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
             <div id="tab-personal" class="tab-content">
                 <h2 class="text-3xl font-bold text-corporate-blue tracking-tight mb-8">Directorio Interno</h2>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-left border-collapse" id="tabla-personal">
-                        <thead><tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100"><th class="py-4 px-6 font-semibold">Documento</th><th class="py-4 px-6 font-semibold">Nombre</th><th class="py-4 px-6 font-semibold">Área / Cargo</th><th class="py-4 px-6 font-semibold">Fecha Ingreso</th></tr></thead>
-                        <tbody><tr><td colspan="4" class="text-center py-6 text-gray-500">Cargando directorio...</td></tr></tbody>
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                <th class="py-4 px-6 font-semibold">Documento</th>
+                                <th class="py-4 px-6 font-semibold">Nombre</th>
+                                <th class="py-4 px-6 font-semibold">Área / Cargo</th>
+                                <th class="py-4 px-6 font-semibold">Fecha Ingreso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4" class="text-center py-6 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando directorio...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
+
             <div id="tab-certificados" class="tab-content">
                 <h2 class="text-3xl font-bold text-corporate-blue tracking-tight mb-8">Solicitudes de Certificados</h2>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full text-left border-collapse" id="tabla-solicitudes">
-                        <thead><tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100"><th class="py-4 px-6 font-semibold">Empleado</th><th class="py-4 px-6 font-semibold">Tipo</th><th class="py-4 px-6 font-semibold text-right">Acción RRHH</th></tr></thead>
-                        <tbody><tr><td colspan="3" class="text-center py-6 text-gray-500">Cargando solicitudes...</td></tr></tbody>
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                <th class="py-4 px-6 font-semibold">Empleado</th>
+                                <th class="py-4 px-6 font-semibold">Tipo</th>
+                                <th class="py-4 px-6 font-semibold text-right">Acción RRHH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="3" class="text-center py-6 text-gray-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando solicitudes...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
+
         </div>
     </main>
 
@@ -156,7 +195,8 @@
             }
         }
     </script>
-    <script src="../js/supabaseClient.js?v=13"></script>
-    <script src="rrhh.js?v=13"></script>
+    
+    <script src="../js/supabaseClient.js?v=20"></script>
+    <script src="rrhh.js?v=20"></script>
 </body>
 </html>

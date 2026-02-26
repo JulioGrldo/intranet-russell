@@ -6,6 +6,7 @@
     <title>Mi Panel | Russell Bedford</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // Si no hay sesión, pa' fuera
         if(!localStorage.getItem('empleado_id')) window.location.href = 'login.html';
         tailwind.config = { theme: { extend: { colors: { corporate: { blue: '#001871', bg: '#F8F9FA' } } } } }
     </script>
@@ -14,7 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabaseClient.js"></script>
 </head>
-<body class="bg-corporate-bg min-h-screen font-sans flex flex-col">
+<body class="bg-corporate-bg min-h-screen font-sans flex flex-col relative">
     
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -30,8 +31,11 @@
     </header>
 
     <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
+        
         <div class="bg-gradient-to-r from-corporate-blue to-[#002bc2] rounded-3xl p-8 text-white shadow-lg mb-8 flex items-center relative overflow-hidden">
-            <div class="absolute -right-10 -top-10 opacity-10"><i class="fa-solid fa-layer-group text-9xl"></i></div>
+            <div class="absolute -right-10 -top-10 opacity-10">
+                <i class="fa-solid fa-layer-group text-9xl"></i>
+            </div>
             <div class="relative z-10 flex items-center gap-6">
                 <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-4xl border-2 border-white/40 shadow-inner">
                     <i class="fa-solid fa-user-tie"></i>
@@ -48,29 +52,52 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
             <div class="lg:col-span-2 space-y-6">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-border-all text-corporate-blue"></i> Mis Servicios</h2>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-border-all text-corporate-blue"></i> Mis Servicios
+                </h2>
+                
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all relative overflow-hidden group">
                         <div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
-                        <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform"><i class="fa-solid fa-file-signature"></i></div>
+                        <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-file-signature"></i>
+                        </div>
                         <h3 class="text-lg font-bold text-gray-800 mb-2">Certificado Laboral</h3>
                         <p class="text-gray-500 text-sm mb-6 line-clamp-2">Solicita un certificado oficial. Podrás elegir a quién va dirigido.</p>
                         <button id="btn-pedir-certificado" class="w-full bg-corporate-blue text-white font-medium py-2.5 rounded-xl text-sm hover:bg-blue-800 transition shadow-md flex items-center justify-center gap-2">
                             <i class="fa-solid fa-paper-plane"></i> Generar Solicitud
                         </button>
                     </div>
+
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 opacity-70">
+                        <div class="w-12 h-12 bg-gray-100 text-gray-500 rounded-xl flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">Comprobantes Nómina</h3>
+                        <p class="text-gray-500 text-sm mb-6 line-clamp-2">Visualiza y descarga tus desprendibles de pago mensuales e históricos.</p>
+                        <button disabled class="w-full bg-gray-100 text-gray-400 font-medium py-2.5 rounded-xl text-sm cursor-not-allowed border border-gray-200">
+                            Próximamente
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="space-y-6">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2"><i class="fa-solid fa-address-card text-corporate-blue"></i> Resumen de Perfil</h2>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fa-solid fa-address-card text-corporate-blue"></i> Resumen de Perfil
+                </h2>
+                
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                     <div class="text-center mb-6">
-                        <div class="inline-block p-3 bg-blue-50 rounded-full mb-3 text-corporate-blue"><i class="fa-solid fa-id-card text-3xl"></i></div>
+                        <div class="inline-block p-3 bg-blue-50 rounded-full mb-3 text-corporate-blue">
+                            <i class="fa-solid fa-id-card text-3xl"></i>
+                        </div>
                         <h4 class="font-bold text-gray-800 text-lg" id="profileName">Cargando...</h4>
                         <p class="text-xs text-gray-500" id="profileDoc">C.C. ---</p>
                     </div>
+                    
                     <div class="space-y-3">
                         <div class="flex justify-between items-center py-2 border-b border-gray-50">
                             <span class="text-sm text-gray-500"><i class="fa-solid fa-envelope mr-2"></i> Correo</span>
@@ -80,6 +107,10 @@
                             <span class="text-sm text-gray-500"><i class="fa-solid fa-calendar-check mr-2"></i> Ingreso</span>
                             <span class="text-sm font-medium text-gray-800" id="profileDate">---</span>
                         </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-sm text-gray-500"><i class="fa-solid fa-star mr-2"></i> Estado</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 rounded-md text-xs font-bold">Activo</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -87,15 +118,24 @@
     </main>
 
     <div id="modal-opciones-cert" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
             <div class="bg-corporate-blue p-5 text-white flex justify-between items-center">
                 <h3 class="font-bold text-lg">Opciones del Certificado</h3>
-                <button onclick="cerrarModalCert()" class="text-white/70 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="cerrarModalCert()" class="text-white/70 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
             <div class="p-6 space-y-5">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Dirigido a:</label>
-                    <input type="text" id="cert-dirigido" value="A QUIEN INTERESE" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-corporate-blue outline-none uppercase text-sm bg-gray-50 focus:bg-white transition-colors">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Motivo:</label>
+                <select name="Motivo" required="" class="text-sm font-semibold text-gray-700 mb-2" >
+                  <option value="" disabled="" selected="">Seleccionar...</option>
+                  <option value="ENTIDAD BANCARIA">ENTIDAD BANCARIA</option>
+                  <option value="INSTITUCION EDUCATIVA">INSTITUCIÓN EDUCATIVA</option>
+                  <option value="OTRAS">OTRAS</option>
+                </select>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Dirigido a:</label>
+                    <input type="text" id="cert-dirigido" value="A QUIEN INTERESE" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-corporate-blue outline-none uppercase text-sm bg-gray-50 focus:bg-white transition-colors">
                 </div>
                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-3">
                     <label class="flex items-center gap-3 cursor-pointer">
@@ -107,13 +147,13 @@
                         <span class="text-gray-700 font-medium text-sm">Incluir mi Salario actual</span>
                     </label>
                 </div>
-                <button id="btn-confirmar-cert" class="w-full bg-corporate-blue hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl transition shadow-md">
-                    Enviar Solicitud a RRHH
+                <button id="btn-confirmar-cert" class="w-full bg-corporate-blue hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl transition shadow-md flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> Enviar Solicitud a RRHH
                 </button>
             </div>
         </div>
     </div>
 
-    <script src="empleado.js?v=14"></script>
+    <script src="empleado.js?v=20"></script>
 </body>
 </html>
