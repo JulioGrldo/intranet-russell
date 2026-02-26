@@ -7,12 +7,12 @@ const adminSupabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2Vyd
 const supabaseAdmin = window.supabase.createClient(adminSupabaseUrl, adminSupabaseKey);
 
 let solicitudesData = [];
+let solicitudActualParaPDF = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     await cargarDirectorio();
     await cargarSolicitudesCertificados();
 
-    // Lógica para Cerrar Sesión
     document.getElementById('btn-logout').addEventListener('click', async () => {
         if(window.supabaseClient) await window.supabaseClient.auth.signOut();
         localStorage.clear();
@@ -39,7 +39,7 @@ async function cargarDirectorio() {
             tr.innerHTML = `
                 <td class="py-4 px-6 font-mono text-sm text-gray-600">${emp.documento}</td>
                 <td class="py-4 px-6 font-bold text-gray-800">${emp.nombre_completo}</td>
-                <td class="py-4 px-6"><div class="text-sm text-corporate-blue font-medium">${emp.area || '-'}</div><div class="text-xs text-gray-500">${emp.cargo || '-'}</div></td>
+                <td class="py-4 px-6"><div class="text-sm text-[#001871] font-medium">${emp.area || emp.division || '-'}</div><div class="text-xs text-gray-500">${emp.cargo || '-'}</div></td>
                 <td class="py-4 px-6 text-sm text-gray-600">${emp.fecha_ingreso || '-'}</td>
             `;
             tbody.appendChild(tr);
@@ -53,7 +53,7 @@ async function cargarSolicitudesCertificados() {
     try {
         const { data, error } = await supabaseAdmin
             .from('solicitudes_certificados')
-            .select('id, tipo_certificado, fecha_solicitud, empleados (nombre_completo, documento, cargo, salario, fecha_ingreso)')
+            .select('id, tipo_certificado, fecha_solicitud, comentarios_rrhh, empleados (*)') 
             .eq('estado', 'pendiente');
 
         if (error) throw error;
@@ -80,8 +80,8 @@ async function cargarSolicitudesCertificados() {
                 <td class="py-4 px-6"><div class="font-bold text-gray-800">${emp.nombre_completo}</div><div class="text-xs text-gray-500">C.C. ${emp.documento}</div></td>
                 <td class="py-4 px-6"><span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">${sol.tipo_certificado.toUpperCase()}</span></td>
                 <td class="py-4 px-6 text-right">
-                    <button onclick="generarYEnviarPDF('${sol.id}')" class="bg-corporate-blue hover:bg-blue-800 text-white font-medium text-sm px-4 py-2 rounded-lg shadow-sm transition">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generar
+                    <button onclick="previsualizarCertificado('${sol.id}')" class="bg-[#001871] hover:bg-blue-900 text-white font-medium text-sm px-4 py-2 rounded-lg shadow-sm transition">
+                        <i class="fa-solid fa-eye mr-2"></i> Previsualizar
                     </button>
                 </td>
             `;
@@ -92,47 +92,116 @@ async function cargarSolicitudesCertificados() {
     }
 }
 
-// LA GENERACIÓN DEL PDF
-window.generarYEnviarPDF = async function(solicitudId) {
+// ==========================================
+// CREADOR DE TEXTO Y GENERADOR DE PDF
+// ==========================================
+
+window.previsualizarCertificado = function(solicitudId) {
     const solicitud = solicitudesData.find(s => s.id === solicitudId);
     if (!solicitud || !solicitud.empleados) return alert("Error: Datos no encontrados.");
-
+    
+    solicitudActualParaPDF = solicitud;
     const emp = solicitud.empleados;
-    
-    // Validaciones de datos para evitar que jsPDF falle
-    const salario = emp.salario ? Number(emp.salario) : 0;
-    const sueldoFormat = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(salario);
-    const fechaFormat = emp.fecha_ingreso ? new Date(emp.fecha_ingreso).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' }) : 'fecha no registrada';
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    doc.setFontSize(22);
-    doc.setTextColor(0, 24, 113); 
-    doc.text('Russell Bedford Colombia', 105, 30, { align: 'center' });
-    
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0); 
-    doc.text('CERTIFICA QUE:', 105, 50, { align: 'center' });
-
-    doc.setFontSize(12);
-    const textoCertificado = `El (la) señor(a) ${emp.nombre_completo}, identificado(a) con Cédula de Ciudadanía No. ${emp.documento}, se encuentra laborando en nuestra firma desde el ${fechaFormat}, desempeñando el cargo de ${emp.cargo || 'empleado'} y devengando una asignación salarial mensual de ${sueldoFormat}.`;
-    
-    const lineas = doc.splitTextToSize(textoCertificado, 170);
-    doc.text(lineas, 20, 70);
-
-    doc.text('Para constancia, se firma la presente certificación a solicitud del interesado.', 20, 110);
-    doc.text('Atentamente,', 20, 140);
-    doc.setFont(undefined, 'bold');
-    doc.text('Departamento de Gestión Humana', 20, 150);
-
-    doc.save(`Certificado_${emp.nombre_completo.replace(/\s+/g, '_')}.pdf`);
-
-    // Actualizar estado en Supabase
+    // 1. Leer las reglas que el empleado escogió en el modal (si no hay, por defecto es todo)
+    let opciones = { dirigido: 'A QUIEN INTERESE', sueldo: true, cargo: true };
     try {
-        await supabaseAdmin.from('solicitudes_certificados').update({ estado: 'generado' }).eq('id', solicitudId);
+        if(solicitud.comentarios_rrhh) opciones = JSON.parse(solicitud.comentarios_rrhh);
+    } catch(e) { console.warn("Usando opciones por defecto"); }
+
+    // 2. Formatear datos
+    const salario = emp.sueldo || emp.salario || 0;
+    const sueldoFormat = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(salario);
+    
+    // Meses en español
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    
+    let fechaIngresoTxt = '[FECHA NO REGISTRADA]';
+    if(emp.fecha_ingreso) {
+        const d = new Date(emp.fecha_ingreso);
+        // Sumamos 1 día porque a veces la zona horaria le resta un día al guardarlo
+        d.setDate(d.getDate() + 1); 
+        fechaIngresoTxt = `${String(d.getDate()).padStart(2, '0')} de ${meses[d.getMonth()]} de ${d.getFullYear()}`;
+    }
+
+    const hoy = new Date();
+    const fechaHoyTxt = `${String(hoy.getDate()).padStart(2, '0')} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+
+    // Validar si tiene lugar de expedición en la base de datos
+    const expedicion = emp.lugar_expedicion_cedula ? ` de ${emp.lugar_expedicion_cedula}` : '';
+    const empresa = emp.razon_social || emp.division || 'GLT GESTIÓN LEGAL Y TRIBUTARIA S.A.S';
+
+    // 3. ARMAMOS TU REDACCIÓN EXACTA
+    let textoBase = `Certificamos que el señor(a) <strong class="uppercase">${emp.nombre_completo}</strong> identificado con cédula de ciudadanía No ${emp.documento}${expedicion}, labora en <strong class="uppercase">${empresa}</strong> con Nit. 900930391-1, desde el ${fechaIngresoTxt}, con contrato a término indefinido`;
+
+    if (opciones.cargo && emp.cargo) {
+        textoBase += `, desempeñando el cargo de <strong class="uppercase">${emp.cargo}</strong>`;
+    }
+    if (opciones.sueldo && salario > 0) {
+        textoBase += ` y devengando un salario mensual de <strong>${sueldoFormat}</strong>`;
+    }
+    textoBase += `.`;
+
+    // 4. Inyectar datos a la plantilla
+    document.getElementById('cert-dirigido-text').innerText = opciones.dirigido;
+    document.getElementById('cert-body-editable').innerHTML = textoBase;
+    document.getElementById('cert-fecha-top').innerText = `Medellín, ${fechaHoyTxt}`;
+
+    // 5. Clonar plantilla hacia el modal
+    const canvas = document.getElementById('previewCanvas');
+    canvas.innerHTML = ''; 
+    const templateClone = document.getElementById('certificado-content').cloneNode(true);
+    templateClone.id = "cloned-cert-content";
+    canvas.appendChild(templateClone);
+
+    // 6. Mostrar pantalla
+    document.getElementById('modalPreview').classList.remove('hidden');
+}
+
+window.cerrarPreview = function() {
+    document.getElementById('modalPreview').classList.add('hidden');
+    solicitudActualParaPDF = null;
+}
+
+window.descargarCertificado = async function() {
+    if(!solicitudActualParaPDF) return;
+
+    const btn = document.getElementById('btnDownloadFromPreview');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Generando...';
+
+    const emp = solicitudActualParaPDF.empleados;
+    // Capturamos la vista clonada (que incluye las ediciones manuales que hizo el Admin)
+    const element = document.getElementById('cloned-cert-content');
+
+    // Desactivar temporalmente el modo editable para que no salga el cursor en el PDF
+    const editableDiv = element.querySelector('#cert-body-editable');
+    if (editableDiv) editableDiv.removeAttribute('contenteditable');
+
+    const opt = {
+        margin:       0,
+        filename:     `Certificado_Laboral_${emp.nombre_completo.replace(/\s+/g, '_')}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' } 
+    };
+
+    try {
+        await html2pdf().set(opt).from(element).save();
+
+        await supabaseAdmin.from('solicitudes_certificados')
+            .update({ estado: 'generado' })
+            .eq('id', solicitudActualParaPDF.id);
+        
         cargarSolicitudesCertificados();
+        cerrarPreview();
+
     } catch (err) {
-        console.error("Error actualizando DB:", err);
+        console.error("Error generando PDF:", err);
+        alert("Ocurrió un error al crear el archivo. Revisa la consola.");
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
     }
 }

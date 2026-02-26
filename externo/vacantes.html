@@ -3,70 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Vacantes | Russell Bedford</title>
+    <title>Trabaja con Nosotros - Russell Bedford</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = { theme: { extend: { colors: { corporate: { blue: '#001871', light: '#002bc2', bg: '#F8F9FA' } } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        brand: { 
+                            dark: '#001871', // Azul Russell
+                            primary: '#F26822', // Naranja Russell
+                            teal: '#528F70' // Verde/Teal Russell
+                        } 
+                    } 
+                } 
+            } 
+        }
     </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-     <link
-      rel="icon"
-      href="https://www.russellbedford.com.co/favicon.ico"
-      type="image/x-icon"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="icon" href="https://raw.githubusercontent.com/AutomatizaRussell/Resourse_GestionHumana/main/Logo_RB2021.png?v=1" type="image/png"/>
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/supabaseClient.js"></script>
 </head>
-<body class="bg-corporate-bg min-h-screen font-sans">
-    
-    <header class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <img src="https://raw.githubusercontent.com/AutomatizaRussell/Resourse_GestionHumana/main/Logo_RB2021.png" alt="Logo Russell Bedford" class="h-12">
-            <a href="../index.html" class="text-gray-500 hover:text-corporate-blue transition font-medium"><i class="fa-solid fa-arrow-left mr-2"></i> Volver al Inicio</a>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <nav class="fixed w-full z-40 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="../index.html" class="flex items-center gap-3">
+                <img src="https://raw.githubusercontent.com/AutomatizaRussell/Resourse_GestionHumana/main/Logo_RB2021.png" alt="Russell Bedford" class="h-12 w-auto">
+            </a>
+
+            <div class="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600">
+                <a href="#cultura" class="hover:text-brand-dark transition-colors">Cultura</a>
+                <a href="#beneficios" class="hover:text-brand-dark transition-colors">Beneficios</a>
+                <a href="#vacantes" class="hover:text-brand-dark transition-colors">Vacantes</a>
+
+                <div class="h-4 w-px bg-gray-300 mx-2"></div> 
+                <a href="../interno/login.html" class="text-gray-400 hover:text-brand-primary transition-colors p-2" title="Acceso Administrativo">
+                    <i class="ph ph-lock-key text-lg"></i>
+                </a>
+            </div>
+
+            <a href="#vacantes" class="bg-brand-dark text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition-all shadow-lg shadow-brand-dark/20 hidden md:block">
+                Ver Oportunidades
+            </a>
         </div>
-    </header>
+    </nav>
 
-    <main class="max-w-6xl mx-auto px-6 py-12">
-        <h1 class="text-4xl font-bold text-corporate-blue mb-2">Únete a nuestro equipo</h1>
-        <p class="text-gray-600 mb-10">Explora las oportunidades laborales y forma parte de las divisiones GLT y GCT.</p>
+    <section id="contenido" class="pt-28 pb-12">
+        <div class="container mx-auto px-6 grid lg:grid-cols-2 gap-10 items-start min-h-screen pt-10 lg:pt-24">
+            <div class="space-y-12">
+                <div>
+                    <span class="inline-block py-1 px-3 rounded-full bg-blue-50 text-brand-dark text-xs font-bold tracking-wide mb-4 border border-blue-100">
+                        MEDELLÍN, COLOMBIA
+                    </span>
+                    <h1 class="text-4xl lg:text-6xl font-bold text-slate-900 mb-4 tracking-tight leading-tight">
+                        Tu futuro empieza 
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-brand-dark via-brand-teal to-brand-primary">
+                            en Russell Bedford
+                        </span>
+                    </h1>
+                    <p class="text-lg text-slate-500 max-w-2xl leading-relaxed">
+                        Somos una firma global que valora la pasión y el crecimiento. Encuentra tu lugar en nuestras oficinas de Medellín.
+                    </p>
+                </div>
 
-        <div id="vacanciesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <p class="text-gray-500 col-span-full"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando vacantes disponibles...</p>
+                <section id="cultura" class="bg-white border border-slate-100 rounded-2xl p-6">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="md:w-1/2">
+                            <span class="text-brand-primary font-bold tracking-wider text-sm uppercase mb-2 block">Nuestra Historia</span>
+                            <h2 class="text-2xl lg:text-3xl font-bold text-slate-900 mb-4">35 Años de Pasión y Excelencia</h2>
+                            <p class="text-slate-600 leading-relaxed mb-4 text-sm">
+                                Somos una firma con más de 35 años de experiencia, buscando talento apasionado que quiera crecer con nosotros. En Russell Bedford, no solo construimos carreras, construimos legados.
+                            </p>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-1 bg-brand-dark rounded-full"></div>
+                                <p class="text-brand-dark font-medium italic">"Conviértete en tu mejor versión"</p>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
+                                <i class="ph ph-buildings text-3xl text-brand-teal mb-1"></i>
+                                <h3 class="text-2xl font-bold text-slate-800">+393</h3>
+                                <p class="text-slate-500 text-sm">Oficinas</p>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
+                                <i class="ph ph-globe-hemisphere-west text-3xl text-brand-primary mb-1"></i>
+                                <h3 class="text-2xl font-bold text-slate-800">+106</h3>
+                                <p class="text-slate-500 text-sm">Países</p>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
+                                <i class="ph ph-handshake text-3xl text-purple-600 mb-1"></i>
+                                <h3 class="text-2xl font-bold text-slate-800">+700</h3>
+                                <p class="text-slate-500 text-sm">Socios</p>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-center">
+                                <i class="ph ph-users-three text-3xl text-brand-dark mb-1"></i>
+                                <h3 class="text-2xl font-bold text-slate-800">+10.618</h3>
+                                <p class="text-slate-500 text-sm">Empleados</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="beneficios" class="bg-white border border-slate-100 rounded-2xl p-6">
+                    <div class="text-left mb-8 max-w-3xl">
+                        <span class="text-brand-teal font-bold tracking-wider text-sm uppercase mb-2 block">Lo que tenemos para ti</span>
+                        <h2 class="text-2xl lg:text-3xl font-bold text-slate-900 mb-2">Beneficios de Trabajar con Nosotros</h2>
+                        <p class="text-slate-600 text-sm">Diseñamos un ecosistema de bienestar para apoyarte en cada paso de tu vida personal y profesional.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 hover:border-brand-primary/30 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-green-600 mb-3 group-hover:scale-110 transition-transform"><i class="ph ph-currency-dollar text-xl"></i></div>
+                            <h3 class="font-bold text-slate-800 text-sm">Salario Competitivo</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 hover:border-brand-primary/30 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center text-yellow-500 mb-3 group-hover:scale-110 transition-transform"><i class="ph ph-sun-dim text-xl"></i></div>
+                            <h3 class="font-bold text-slate-800 text-sm">Excelente clima</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 hover:border-brand-primary/30 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 mb-3 group-hover:scale-110 transition-transform"><i class="ph ph-clock-countdown text-xl"></i></div>
+                            <h3 class="font-bold text-slate-800 text-sm">Viernes corto</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 hover:border-brand-primary/30 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mb-3 group-hover:scale-110 transition-transform"><i class="ph ph-house-line text-xl"></i></div>
+                            <h3 class="font-bold text-slate-800 text-sm">Trabajo en casa</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 hover:border-brand-primary/30 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-brand-primary mb-3 group-hover:scale-110 transition-transform"><i class="ph ph-graduation-cap text-xl"></i></div>
+                            <h3 class="font-bold text-slate-800 text-sm">Capacitaciones</h3>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-gray-100 hover:border-brand-primary/30 hover:shadow-md transition-all group">
+                            <div class="w-10 h-10 bg-pink-50 rounded-lg flex items-center justify-center text-pink-500 mb-3 group-hover:scale-110 transition-transform"><i class="ph ph-cake text-xl"></i></div>
+                            <h3 class="font-bold text-slate-800 text-sm">Cumpleaños libre</h3>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="w-full h-[calc(100vh-7rem)] overflow-y-auto pr-2 pb-10" id="vacantes">
+                <div class="lg:sticky lg:top-0 space-y-4">
+                    
+                    <div class="flex flex-wrap bg-white p-2 rounded-xl shadow-sm border border-gray-100 gap-1" id="filter-container">
+                        <button data-area-filter="Todas" class="filter-btn px-4 py-2 rounded-lg bg-brand-dark text-white shadow-sm text-sm font-semibold transition-all">Todas</button>
+                        <button data-area-filter="Auditoría" class="filter-btn px-4 py-2 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-orange-50 text-sm font-medium transition-all">Auditoría</button>
+                        <button data-area-filter="Legal" class="filter-btn px-4 py-2 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-orange-50 text-sm font-medium transition-all">Legal</button>
+                        <button data-area-filter="Administrativo" class="filter-btn px-4 py-2 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-orange-50 text-sm font-medium transition-all">Administrativo</button>
+                        <button data-area-filter="Contabilidad" class="filter-btn px-4 py-2 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-orange-50 text-sm font-medium transition-all">Contabilidad</button>
+                        <button data-area-filter="Impuestos" class="filter-btn px-4 py-2 rounded-lg text-slate-500 hover:text-brand-primary hover:bg-orange-50 text-sm font-medium transition-all">Impuestos</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4" id="jobs-container">
+                        <div class="text-center py-10 text-gray-400"><i class="ph ph-spinner-gap animate-spin text-3xl"></i></div>
+                    </div>
+                </div>
+            </aside>
         </div>
-    </main>
+    </section>
 
-    <div id="applyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden relative">
-            <button onclick="document.getElementById('applyModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <div class="p-8">
-                <h2 class="text-2xl font-bold text-corporate-blue mb-6">Aplica a esta vacante</h2>
-                <form id="applicationForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                        <input type="text" id="applicantName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-corporate-blue outline-none">
+    <div id="vacante-preview-modal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeVacantePreviewModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                    <div class="bg-brand-dark px-6 py-6 flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center">
+                                <i class="ph ph-briefcase text-3xl text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white" id="vacante-preview-title">Cargando...</h3>
+                                <p class="text-blue-200 mt-1 text-sm" id="vacante-preview-area">Área</p>
+                            </div>
+                        </div>
+                        <button onclick="closeVacantePreviewModal()" class="text-white hover:text-brand-primary transition">
+                            <i class="ph ph-x text-2xl"></i>
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                        <input type="email" id="applicantEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-corporate-blue outline-none">
+
+                    <div class="px-6 py-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="flex items-center gap-2 mb-1 text-brand-primary"><i class="ph ph-map-pin text-lg"></i> <span class="font-semibold text-sm text-slate-700">Ubicación</span></div>
+                                <p class="text-slate-500 text-sm">Medellín</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <div class="flex items-center gap-2 mb-1 text-brand-primary"><i class="ph ph-clock text-lg"></i> <span class="font-semibold text-sm text-slate-700">Modalidad</span></div>
+                                <p class="text-slate-500 text-sm">Tiempo Completo</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 col-span-2 md:col-span-1">
+                                <div class="flex items-center gap-2 mb-1 text-brand-primary"><i class="ph ph-calendar-check text-lg"></i> <span class="font-semibold text-sm text-slate-700">Estado</span></div>
+                                <p class="text-green-600 font-medium text-sm">Vigente</p>
+                            </div>
+                        </div>
+
+                        <h4 class="text-lg font-bold text-slate-800 mb-3">Descripción del Cargo</h4>
+                        <div class="text-slate-600 text-sm leading-relaxed mb-8 bg-slate-50 p-5 rounded-xl border border-slate-100" id="vacante-preview-descripcion">...</div>
+
+                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                            <button onclick="closeVacantePreviewModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors">Cancelar</button>
+                            <button onclick="applyFromPreview()" class="px-6 py-2.5 rounded-xl bg-brand-primary text-white font-bold hover:bg-orange-600 transition-colors shadow-md flex items-center gap-2">
+                                <i class="ph ph-paper-plane-tilt"></i> Postularme Ahora
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                        <input type="tel" id="applicantPhone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-corporate-blue outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Hoja de Vida (PDF)</label>
-                        <input type="file" id="applicantCV" accept=".pdf" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-corporate-blue hover:file:bg-blue-100">
-                    </div>
-                    <button type="submit" class="w-full mt-6 bg-corporate-blue hover:bg-blue-800 text-white font-medium py-3 rounded-lg transition shadow-md">
-                        Enviar Aplicación
-                    </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="vacantes.js"></script>
+    <div id="application-modal" class="fixed inset-0 z-[70] hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <div class="bg-brand-dark px-6 py-5 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Envía tus datos</h3>
+                            <p class="mt-1 text-sm text-blue-200">Cargo: <span id="modal-cargo" class="font-bold text-white">---</span></p>
+                        </div>
+                        <button onclick="closeModal()" class="text-white hover:text-brand-primary"><i class="ph ph-x text-2xl"></i></button>
+                    </div>
+
+                    <form id="apply-form" class="px-6 py-6 space-y-4" onsubmit="submitApplication(event)">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Nombre Completo</label>
+                            <input type="text" id="nombre" required class="block w-full rounded-xl border-slate-200 bg-slate-50 border py-3 px-4 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Cédula</label>
+                                <input type="number" id="cedula" required class="block w-full rounded-xl border-slate-200 bg-slate-50 border py-3 px-4 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Celular</label>
+                                <input type="tel" id="celular" required class="block w-full rounded-xl border-slate-200 bg-slate-50 border py-3 px-4 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Correo Electrónico</label>
+                            <input type="email" id="email" required class="block w-full rounded-xl border-slate-200 bg-slate-50 border py-3 px-4 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Hoja de Vida (PDF)</label>
+                            <div class="mt-1 flex justify-center rounded-xl border-2 border-dashed border-slate-300 px-6 pt-5 pb-6 hover:bg-slate-50 hover:border-brand-primary transition-all cursor-pointer relative group">
+                                <input type="file" id="cv" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required onchange="updateFileName(this)">
+                                <div class="space-y-2 text-center relative z-0">
+                                    <i class="ph ph-file-pdf text-4xl text-slate-400 group-hover:text-brand-primary transition-colors"></i>
+                                    <div class="text-sm text-slate-600">
+                                        <span class="font-bold text-brand-dark">Selecciona un archivo</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 font-medium bg-white px-2 py-1 rounded-md shadow-sm border border-slate-100 inline-block" id="file-name">Máximo 5MB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start pt-2 pb-2">
+                            <input id="terms" type="checkbox" required class="h-4 w-4 rounded border-slate-300 text-brand-primary focus:ring-brand-primary mt-0.5">
+                            <label for="terms" class="ml-3 text-sm text-slate-600">Acepto la <button type="button" onclick="openTermsModal()" class="text-brand-primary hover:underline font-bold">política de datos personales</button>.</label>
+                        </div>
+
+                        <button type="submit" class="w-full rounded-xl bg-brand-dark hover:bg-blue-900 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-dark/20 transition-all flex justify-center items-center gap-2">
+                            Enviar Postulación
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="terms-modal" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm" onclick="closeTermsModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative rounded-2xl bg-white text-left shadow-2xl w-full max-w-2xl overflow-hidden">
+                    <div class="border-b border-gray-100 px-6 py-5 bg-slate-50 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-brand-dark">Política de Tratamiento de Datos</h3>
+                        <button type="button" onclick="closeTermsModal()" class="text-gray-400 hover:text-brand-primary"><i class="ph ph-x text-xl"></i></button>
+                    </div>
+                    <div class="p-6 max-h-[60vh] overflow-y-auto prose prose-sm prose-slate">
+                        <p>Al aceptar la política de tratamiento de datos, autorizo a <strong>RUSSELL BEDFORD</strong> para tratar mis datos personales para fines de reclutamiento y selección.</p>
+                        <p>Fui advertido sobre el derecho que tengo a conocer, actualizar, rectificar y suprimir mi información personal, así como el derecho a revocar el consentimiento otorgado.</p>
+                        <p>Para ejercer mis derechos, puedo comunicarme al correo: <a href="mailto:info@russellbedford.com.co" class="text-brand-primary">info@russellbedford.com.co</a></p>
+                    </div>
+                    <div class="px-6 py-4 bg-slate-50 flex justify-end gap-3 rounded-b-2xl">
+                        <button onclick="closeTermsModal()" class="px-6 py-2 rounded-lg border border-gray-300 font-medium text-slate-600 hover:bg-white">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="vacantes.js?v=2"></script>
 </body>
 </html>
